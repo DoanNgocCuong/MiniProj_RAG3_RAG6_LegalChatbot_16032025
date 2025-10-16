@@ -9,7 +9,7 @@ It extracts answers and questions, creates embeddings, and stores them in Qdrant
 import os
 import pandas as pd
 from dotenv import load_dotenv
-from langchain_community.embeddings import HuggingFaceInferenceAPIEmbeddings
+from langchain_huggingface import HuggingFaceEmbeddings
 from langchain_community.vectorstores import Qdrant
 from langchain.schema import Document
 
@@ -66,9 +66,15 @@ def create_vector_database(excel_file_path, collection_name=None):
     
     print(f"Initializing embeddings with model: {EMBEDDINGS_MODEL_NAME}")
     # Generate embeddings using HuggingFaceInferenceAPIEmbeddings
-    embeddings = HuggingFaceInferenceAPIEmbeddings(
-        model_name=EMBEDDINGS_MODEL_NAME,
-        api_key=HUGGINGFACE_API_KEY
+    # embeddings = HuggingFaceInferenceAPIEmbeddings(
+    #     model_name=EMBEDDINGS_MODEL_NAME,
+    #     api_key=HUGGINGFACE_API_KEY
+    # )
+    
+    embeddings = HuggingFaceEmbeddings(
+        model_name="sentence-transformers/paraphrase-multilingual-mpnet-base-v2",
+        model_kwargs={'device': 'cuda'},  # hoặc 'cpu' nếu không có GPU
+        encode_kwargs={'normalize_embeddings': True}
     )
     
     print(f"Creating vector database in Qdrant collection: {collection_name}")
